@@ -6,73 +6,92 @@
            </template>
         <template #right>
             <div class="div">
-            <span>登录</span>|<span>注册</span>
+              <a href="" @click.prevent="login">登录</a>|<a href="" @click.prevent="register">注册</a>
             </div>
         </template>
       </van-nav-bar>
 
-        <van-grid :column-num="4">
-           <van-grid-item v-for="item in topiclists" :key="item.id" icon="photo-o" :text="item.desc" />
-        </van-grid>
+          <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+          <van-swipe-item v-for="(item,index) in 2" :key="index">
+            <van-grid>
+            <van-grid-item v-for="(item,index) in merchants" :key="index" :icon="'http://47.95.13.193:80/takeOutSystem-1.0-SNAPSHOT/'+item.photo" :text="item.name" />
+          </van-grid>
+          </van-swipe-item>
+          </van-swipe>
           
-          <div>
-                <van-swipe-cell>
-                <van-card
-                    num="2"
-                    price="2.00"
-                    desc="描述信息"
-                    title="商品标题"
-                    class="goods-card"
-                    thumb="1"
-                  />
-                </van-swipe-cell>
-          </div>
+          <van-card v-for="(item,index) in allShops" :key="index"
+            :num="2"
+            :price="item.minPrice+'起送'+' / 配送费约'+'￥'+item.transportationPrice"
+            :title="item.name"
+            :thumb="'http://47.95.13.193:80/takeOutSystem-1.0-SNAPSHOT/'+item.photo"
+             >
+             <template #tags>
+            
+              <van-rate v-model="value" />
+              <span>{{item.score}}</span>
+              <span style="color:orange">月销量{{item.sales}}单</span>
+               <div class="tag">
+              <van-tag  color="orange" plain>联想教育</van-tag>
+               </div>
+            </template>
+           
+          </van-card>
          
 
     </div>
 </template>
 <script>
-import { NavBar ,Swipe,Grid, GridItem,SwipeCell} from 'vant';
-import { mapState , } from 'vuex';
 
+import { Swipe, SwipeItem, Grid, GridItem , Card  } from 'vant'
 export default {
     name:"home",
+    props:["name"],
     data() {
         return {
-        //    topiclists:""
+          merchants:null,
+          allShops:null,//所有商家
+          value:4,
         }
     },
     components:{
-        NavBar,
-        Swipe,
-        Grid, 
-        GridItem,
-        SwipeCell
+       Swipe, SwipeItem ,
+        Grid, GridItem ,
+        Card 
     },
     computed:{
-        ...mapState(['topiclists']),
-
+  
     },
     methods: {
-       
-         beforeRouteEnter:function(to, from, next) {
-            next(function(vm){
-            vm.$http.post("/biz/queryBigCategory").then(function(res){
-                console.log(res.data)
-                vm.topiclists=res.data
-            })
+      //登录
+      login:function(){
+         console.log("登录")
+      },
+      //注册
+      register:function(){
+        console.log("注册")
+      },
+      //首页顶部九宫格信息
+      fetchData:function(){
+        var that =this;
+        this.$http.post('/biz/queryBigCategory').then(function(res){
+          // console.log(res.data);
+          that.merchants=res.data
         })
-         },
-          beforeRouteUpdate:function(to, from, next){
-                 var app=this;
-                   this.$http.post("/biz/queryBigCategory").then(function(res){
-                    app.topiclists=res.data
-                
-            });
-            next();
-    }
-
+      },
+      //所有商家信息
+      infoData:function(){
+        var app=this;
+        this.$http.get('/biz/queryAllShopsInfo').then(function(res){
+          console.log(res.data)
+          app.allShops=res.data
+        })
+      }
      },
+
+    created:function(){
+      this.fetchData();
+      this.infoData();
+    }
 
 }
 </script>
@@ -84,7 +103,10 @@ export default {
     text-align: center;
     background-color: #39a9ed;
   }
-  .div{
+  .div,.div a{
       color: #fff;
+  }
+  .tag{
+    float: right;
   }
 </style>

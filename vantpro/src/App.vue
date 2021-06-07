@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { Tabbar, TabbarItem } from 'vant';
+// import { Tabbar, TabbarItem } from 'vant';
 export default {
   name: 'app',
   data () {
@@ -19,9 +19,9 @@ export default {
       active:0
     }
   },
-  components:{
-    Tabbar, TabbarItem
-  }
+  // components:{
+  //   Tabbar, TabbarItem
+  // }
 }
 </script>
 

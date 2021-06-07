@@ -15,7 +15,8 @@ const routes=[
         redirect:'/home'
     },
     {path:"/home",
-     component:Home
+     component:Home,
+     props:true
     },
     {path:"/search",
      component:Search
