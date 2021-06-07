@@ -5,74 +5,75 @@
                <van-icon name="search" size="18" color="white"/>
            </template>
         <template #right>
-            <span>登录</span>|
-            <span>注册</span>
+            <div class="div">
+            <span>登录</span>|<span>注册</span>
+            </div>
         </template>
       </van-nav-bar>
 
-        <van-swipe class="my-swipe" @change="onChange" indicator-color="white" touchable>
-           <van-swipe-item v-for="(item,index) in topiclists" :key="index"> {{item.desc}}</van-swipe-item>
-           <!-- <van-swipe-item>2</van-swipe-item> -->
-        </van-swipe>
+        <van-grid :column-num="4">
+           <van-grid-item v-for="item in topiclists" :key="item.id" icon="photo-o" :text="item.desc" />
+        </van-grid>
+          
+          <div>
+                <van-swipe-cell>
+                <van-card
+                    num="2"
+                    price="2.00"
+                    desc="描述信息"
+                    title="商品标题"
+                    class="goods-card"
+                    thumb="1"
+                  />
+                </van-swipe-cell>
+          </div>
+         
+
     </div>
 </template>
 <script>
-import { NavBar ,Swipe, SwipeItem ,Toast } from 'vant';
+import { NavBar ,Swipe,Grid, GridItem,SwipeCell} from 'vant';
 import { mapState , } from 'vuex';
 
 export default {
     name:"home",
     data() {
         return {
-            page:1,//页码 默认第一页
-            limit:8,//每页显示8条数据
+        //    topiclists:""
         }
     },
     components:{
         NavBar,
-        Swipe, 
-        SwipeItem,
-        Toast 
+        Swipe,
+        Grid, 
+        GridItem,
+        SwipeCell
     },
     computed:{
         ...mapState(['topiclists']),
 
     },
     methods: {
-    onChange(index) {
-    //   Toast('当前 Swipe 索引：' + index);
-    },
-
-    beforeRouteEnter:function(to, from, next) {
-        next(function(vm){
-            vm.$http.post("/biz/queryBigCategory",{
-                params:{
-                    tab:to.params.name,
-                    page:vm.page,
-                    limit:vm.limit
-                }
-            }).then(function(response){
-                console.log(response.data);
-                
+       
+         beforeRouteEnter:function(to, from, next) {
+            next(function(vm){
+            vm.$http.post("/biz/queryBigCategory").then(function(res){
+                console.log(res.data)
+                vm.topiclists=res.data
             })
         })
-    },
-    beforeRouteUpdate:function(to, from, next){
-        var app=this;
-        this.$http.post("/biz/queryBigCategory",{
-                params:{
-                    tab:to.params.name,
-                    page:this.page,
-                    limit:this.limit
-                }
-            }).then(function(response){
-                // if(response.data.success){
-                //     app.listData=response.data.data;
-                // }
+         },
+          beforeRouteUpdate:function(to, from, next){
+                 var app=this;
+                   this.$http.post("/biz/queryBigCategory").then(function(res){
+                    app.topiclists=res.data
+                
             });
             next();
     }
-  },
+
+     },
+
 }
 </script>
 <style>
@@ -82,5 +83,8 @@ export default {
     line-height: 150px;
     text-align: center;
     background-color: #39a9ed;
+  }
+  .div{
+      color: #fff;
   }
 </style>

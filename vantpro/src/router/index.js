@@ -4,6 +4,8 @@ import Search from "../components/search.vue"
 import Order from "../components/order.vue"
 import My from "../components/my.vue"
 import Vuerouter from "vue-router"
+import Login from "../components/Login.vue"
+import Register from "../components/Register.vue"
 
 Vue.use(Vuerouter);
 
@@ -23,6 +25,12 @@ const routes=[
     },
     {path:"/my",
      component:My
+    },
+    {path:"/login",
+     component:Login
+    },
+    {path:"/register",
+     component:Register
     },
 ]
 
