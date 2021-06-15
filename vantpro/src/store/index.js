@@ -7,7 +7,10 @@ Vue.use(Vuex);
 
 const store =new Vuex.Store({
     state:{
-       
+       //是否登录
+       isLogin:false,
+       //用户名
+       UserName:'',
     },
     //状态数据的计算属性
     getters:{

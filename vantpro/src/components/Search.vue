@@ -14,22 +14,36 @@
             </template>
         </van-search>
 
-        <van-card v-for="(item,index) in searchAll" :key="index"
-                :num="2"
-            :price="item.minPrice+'起送'+' / 配送费约'+'￥'+item.transportationPrice"
-            :title="item.name"
+        <van-card v-for="(item,index) in searchAll" :key="index" @click="Goodsdetails(item.id)"
+            :num="2"
             :thumb="'http://47.95.13.193:80/takeOutSystem-1.0-SNAPSHOT/'+item.photo"
-             >
-             <template #tags>
-            
-              <van-rate v-model="rate" />
-              <span>{{item.score}}</span>
-              <span style="color:orange">月销量{{item.sales}}单</span>
-               <div class="tag">
-              <van-tag  color="orange" plain>联想教育</van-tag>
-               </div>
+           >
+
+             <template #title>
+                  <van-tag color="rgb(248,210,80)" text-color="#0D0D0D">品牌</van-tag>
+                  <b>{{item.name}}</b>
+                  <van-tag color="rgb(248,210,80)" text-color="#0D0D0D" style="float:right;margin-right: 5px;">票</van-tag>
+                  <van-tag color="rgb(248,210,80)" text-color="#0D0D0D" style="float:right;margin-right: 5px;">准</van-tag>
+                  <van-tag color="rgb(248,210,80)" text-color="#0D0D0D" style="float:right;margin-right: 5px;">保</van-tag>
+             </template>
+
+             <template slot="desc">
+                <div style="margin-top:10px">
+                    <span v-for="index in 5" :key="index">
+                        <van-icon v-if="index<item.score" name="star" color="rgb(283,10,36)"/>
+                        <van-icon v-else name="star-o" />
+                    </span>
+                    <span> {{item.score}} </span>
+                    <span style="color:rgb(248,196,135)">月销{{item.sales}}单</span>
+                    <van-tag color="rgb(248,196,135)" text-color="rgb(248,196,135)" style="float:right" plain>联想教育</van-tag>
+                </div>
             </template>
-           
+
+             <template #bottom>
+               <div>￥{{item.minPrice}}起送 / 配送费约￥{{item.transportationPrice}}</div>
+             </template>
+
+            
           </van-card>
     </div>
 </template>
@@ -39,8 +53,7 @@ export default {
     name:"search",
     data() {
     return {
-      value: '',
-      rate:4,
+      value:'',
       searchAll:null,
     };
   },
@@ -48,24 +61,25 @@ export default {
         Card 
     },
   methods: {
-    onSearch(val) {
-    //   Toast(val);
-      this.$http.get("/biz/queryAllShopsInfoByName?").then(function(res){
-          console.log(res)
-      })
-    },
-    searchData:function(){
+    //搜索商家信息
+     onSearch:function(){
+            var app = this ;
+            this.$http.get('/biz/queryAllShopsInfoByName?name='+this.value).then(function(res){
+                app.searchAll=res.data;
+            })
+     },
+     //跳转到商品详情
+      Goodsdetails:function(id){
+            this.$router.push('/goodsdetails/' + id)
+     },
+     //获取所有商品
+     searchData:function(){
         var app=this;
-        this.$http.get('/biz/queryAllShopsInfo').then(function(res){
-            console.log(res.data)
+        this.$http.post('/biz/queryAllShopsInfo').then(function(res){
             app.searchAll=res.data
         })        
-        }
+     },
 
-    
-    // onCancel() {
-    //   Toast('取消');
-    // },
   },
 
   created:function(){
@@ -75,8 +89,8 @@ export default {
 }
 </script>
 
-<style>
-.tag{
-    float: right;
-  }
+<style lang="">
+    .van-nav-bar__title{
+        color: white;
+    }
 </style>
