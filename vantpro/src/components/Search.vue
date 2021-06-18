@@ -3,6 +3,7 @@
        <van-nav-bar style="background:rgb(0,166,124)" title="搜索">
        </van-nav-bar>
 
+<form action="/">
        <van-search
             v-model="value"
             show-action
@@ -13,6 +14,7 @@
                 <button style="background:rgb(0,166,124);color:white;border: 0;" @click="onSearch">搜索</button>
             </template>
         </van-search>
+        </form>
 
         <van-card v-for="(item,index) in searchAll" :key="index" @click="Goodsdetails(item.id)"
             :num="2"

@@ -1,14 +1,16 @@
 <template>
     <div>
-      <van-nav-bar title="正在定位..." :right-text=RightText right-arrow  @click-left="onSearch"
+      <van-nav-bar :title="positionAddress ?positionAddress :'正在定位...'" :right-text=RightText right-arrow  @click-left="onSearch"
         @click-right="onLogin" style="background-color:rgb(0,166,124);color:white">
         <template #left>
         <van-icon name="search" size="18" color="white"/>
         </template>
         </van-nav-bar>
 
+        
+
           <van-swipe class="my-swipe" :autoplay="3000" indicator-color="rgb(0,166,124)">
-          <van-swipe-item v-for="(item,index) in 2" :key="index">
+          <van-swipe-item v-for="(item,index) in 2" :key="index" border>
               <van-grid>
               <van-grid-item v-for="(item,index) in merchants" :key="index" :icon="'http://47.95.13.193:80/takeOutSystem-1.0-SNAPSHOT/'+item.photo" :text="item.name" />
             </van-grid>
@@ -53,6 +55,17 @@
 
             
           </van-card>
+
+          <div class="amap-page-container">
+              <el-amap vid="amap" :plugin="plugin" class="amap-demo" :center="center">
+              </el-amap>
+              <div class="toolbar">
+                <!-- <span v-if="loaded">
+                  location: lng = {{ lng }} lat = {{ lat }}
+                </span>
+                <span v-else>正在定位</span> -->
+              </div>
+        </div>
          
 
     </div>
@@ -65,10 +78,45 @@ export default {
     name:"home",
     props:["name"],
     data() {
+      let self=this;
         return {
           text:'登录|注册',
           merchants:null,
           allShops:null,//所有商家
+          positionAddress:"",
+          center: [121.59996, 31.197646],
+          lng: 0,
+          lat: 0,
+          loaded: false,
+          plugin: [
+            {
+              pName: "Geolocation",
+              events: {
+                init(o) {
+                  // o 是高德地图定位插件实例
+                  o.getCurrentPosition((status, result) => {
+                    console.log(result);
+                    // console.log(result.addressComponent.township);
+                    if (result && result.position) {
+                      var len = result.addressComponent.township.length;
+                      var index = result.formattedAddress.indexOf(
+                        result.addressComponent.township
+                      );
+                      self.positionAddress = result.formattedAddress.substring(
+                        index + len
+                      );
+                      // self.lng = result.position.lng;
+                      // self.lat = result.position.lat;
+                      // self.center = [self.lng, self.lat];
+                      self.loaded = true;
+                      self.$nextTick();
+                    }
+                  });
+                },
+              },
+            },
+          ],
+
         }
     },
     components:{
@@ -110,7 +158,7 @@ export default {
       infoData:function(){
         var app=this;
         this.$http.get('/biz/queryAllShopsInfo').then(function(res){
-          console.log(res.data)
+          // console.log(res.data)
           app.allShops=res.data
         })
       },

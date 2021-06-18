@@ -4,9 +4,11 @@
     <van-card
     style="background-color:rgb(0,166,124);margin-top:0px;font-size:14px"
     num="2"
-    title="登录/注册"
     round
     >
+     <template #title>
+       <p><a style="color:white;margin-top:45px;" href="#/login">{{Name}}</a></p> 
+        </template> 
     <template #thumb>
         <van-image
         round
@@ -15,7 +17,7 @@
     />
     </template>
     <template #desc>
-        <div style="margin-top:25px;font-size:14px">
+        <div style="font-size:14px">
             <van-icon name="phone-o" color="white" />
             <span style="color:white">暂无绑定手机号</span>
         </div>
@@ -59,8 +61,14 @@
 </template>
 <script>
 import {NavBar,Card,Image as VanImage,Icon , Grid, GridItem, Cell, CellGroup} from 'vant';
+import {mapState} from "vuex"
 export default {
     name:'my',
+    data() {
+        return {
+            text:'登录/注册',
+        }
+    },
     components:{
         // NavBar,
         // Card,
@@ -70,6 +78,16 @@ export default {
         // GridItem,
         // Cell,
         // CellGroup
+    },
+    computed:{
+        ...mapState(['isLogin','UserName']),
+         Name:function(){
+            if(this.isLogin==false){
+                return this.text
+            }else{
+                return this.UserName
+            }
+        }
     }
 }
 </script>

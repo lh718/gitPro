@@ -1,6 +1,6 @@
 <template>
     <div>
-        <van-nav-bar left-arrow/>
+        <van-nav-bar left-arrow @click-left	="clickLeft"/>
         <div class="title">
             <b>硅谷外卖</b>
         </div>
@@ -62,6 +62,9 @@ export default {
                 this.ftype="password"
             }
         },
+        clickLeft:function(){
+            this.$router.go(-1);
+        },  
      
         LoginBtn:function(){
             //账号 admin 密码 123456
